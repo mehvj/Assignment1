@@ -1,0 +1,131 @@
+---
+title: "Assignment1"
+author: "Mehvish Jamal"
+date: "9/7/2021"
+output: html_document
+---
+# Introduction ---
+Our team was interested in looking at hospitals in relation to flood risk areas. Our overall question was: what does the relationship between hospital location and sea level rise tell us about the City of Boston’s health infrastructure resiliency?
+
+We have mapped hospitals in Boston and the area of 36 inch sea level rise that is anticipated by 2070. We played with different aesthetic choices that would make the map most legible and highlight hospitals that would be at risk of flooding, which is an important planning and public health consideration for the City of Boston. The data was taken from Analyze Boston.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loading Packages ---
+```{r load packages, message=FALSE}
+library(sf)
+library(tidyverse)
+library(ggspatial)
+library(ggthemes)
+
+```
+# Adding Spatial Datasets ---
+```{r}
+nbhoods <- st_read("https://bostonopendata-boston.opendata.arcgis.com/datasets/3525b0ee6e6b427f9aab5d0a1d0a1a28_0.geojson?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D", quiet = TRUE)
+
+hospitals <- st_read("https://bostonopendata-boston.opendata.arcgis.com/datasets/8f1e5741a4ee4c0f82925d17aab3c002_2.geojson?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D", quiet = TRUE)
+
+searise <- st_read("https://bostonopendata-boston.opendata.arcgis.com/datasets/74692fe1b9b24f3c9419cd61b87e4e3b_5.kml?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D", quiet = TRUE)
+
+```
+
+# Plotting Layers ---
+We began by plotting the layers before experimenting with base maps and colors.
+```{r}
+ggplot (nbhoods) +
+   geom_sf() +
+   geom_sf(data = searise) +
+   geom_sf(data = hospitals)
+```
+
+# Formatting Spatial Data ---
+We experimented with color, fill, line weights and base maps across the layers to both gain proficiency with R's capabilities, and create maps that effectively communicate this data.
+
+In this map, we used plus signs to designate hospital locations to try to have more precision. However, the clashing colors make it hard to determine what's important.
+```{r, message=FALSE}
+ggplot(nbhoods) +
+  annotation_map_tile(zoomin = 0, progress = "none", type = "cartolight") +
+  labs(caption = "2070 Sea-Level Rise Threat (36-in) to Boston Hospitals") + 
+  geom_sf(aes(fill = "Boston Neighborhood")) +
+  geom_sf(data = searise, alpha = 0.5, color = NA, 
+        aes(fill = "Predicted Sea-Level Rise by 2070")) +
+  geom_sf(data = hospitals, shape = 3, size = 4, 
+        aes(color = "Boston Hospitals")) +
+  scale_fill_manual(values = c("purple","blue"), name = "") +
+  scale_color_manual(values = "red", name = "") +
+  theme_void() +
+  labs(caption = "Map tiles and data from OpenStreetMap")
+```
+
+This map attempts to use contrasting colors to make it more evident where the sealevel will intrude onto the land. We also used transparency to make it clearer where the land and sea overlap.
+```{r}
+ggplot(nbhoods) +
+  annotation_map_tile(zoomin = 0, progress = "none", type = "cartolight") +
+  labs(caption = "2070 Sea-Level Rise Threat (36-in) to Boston Hospitals") + 
+  geom_sf(alpha = 0.2, color = "yellow2",
+        aes(fill = "Boston Neighborhood")) +
+  geom_sf(data = searise, alpha = 0.2, color = "purple3", 
+        aes(fill = "Predicted Sea-Level Rise by 2070")) +
+  geom_sf(data = hospitals, shape = 16, 
+        aes(color = "Boston Hospitals")) +
+  scale_fill_manual(values = c("yellow","purple"), name = "") +
+  scale_color_manual(values = "red", name = "") +
+  theme_void() +
+  labs(caption = "Map tiles and data from OpenStreetMap")
+
+```
+
+In this map, we used the hotstyle base map to have a more engaging basemap. However this map uses too many colors, and the thickness of the polygons and points makes it hard to distinguish the data from the base map.
+
+```{r}
+ggplot() +
+  annotation_map_tile(zoomin = 0, progress = "none", type = "hotstyle") +
+  geom_sf() + labs(capiton = "Map tiles and data by OpenStreetMap") +
+  geom_sf(data = searise, color = "deeppink", size = 1, alpha = .6,
+          aes(fill = "Sea Level Rise")) +
+  geom_sf(data = hospitals, size = 3, 
+          aes(color = "Hospitals")) +
+  scale_fill_manual(values = "lightcyan", name = "")+
+  scale_color_manual(values = "goldenrod1", name = "") +
+  theme_void()+
+  labs(caption = "Map tiles and data from OpenStreetMap")
+```
+
+We tried to use a darker base map here to draw greater attention to the location of the hospitals relative to the water while experimenting with contrast.
+```{r}
+ggplot() +
+  annotation_map_tile(zoomin = 0, progress = "none", type = "cartodark") +
+  geom_sf(data = searise, color = NA, alpha = 0.3, aes(fill = "Sea Level Rise")) + 
+  geom_sf(data = hospitals, size = 1.9, alpha = 0.6, aes(color = "Hospitals")) +
+  scale_fill_manual(values= "light blue", name ="") +
+  scale_color_manual(values = c("orange"), name = "")+
+  theme_void()+
+  labs(caption = "Map tiles and data from OpenStreetMap")
+
+```
+
+This map uses a lighter color scheme and a polygon outline to draw more attention to the relationship of the water to the land. However, it is difficult to tell where the water overlaps the land. More transparency of the polygon layer could be helpful.
+```{r}
+ggplot() +
+  annotation_map_tile(zoomin = 0, progress = "none", type = "cartolight") +
+  geom_sf() + labs(capiton = "Map tiles and data by OpenStreetMap") +
+  geom_sf(data = searise, color = "powderblue", size = 1, alpha = .6,
+          aes(fill = "Sea Level Rise")) +
+  geom_sf(data = hospitals, size = 1, 
+          aes(color = "Hospitals")) +
+  scale_fill_manual(values = "lightcyan", name = "")+
+  scale_color_manual(values = "lightcoral", name = "") +
+  theme_void() +
+  labs(caption = "Map tiles and data from OpenStreetMap")
+
+```
+
+# Team Work Assessment ---
+We met all together to set expectations and a work plan for the assignment. We decided to each make one ugly map and one pretty map to share with the group. Over Zoom and WhatsApp, we helped each other troubleshoot technical difficulties. After class on Tuesday, we came back together to knit our final HTML file and add text descriptions with all of our maps. The work was equally shared between all four of us. We unanimously agreed to distribute 40 points evenly between each group member. 
+
+# Final Analysis ---
+We set out to see if, through the process of mapping, we can understand some of the risks that sea level rise introduces to healthcare infrastructure resiliency. What we found in learning-by-working through R is that none of our maps proved incredibly effective as an analysis tool due to the challenges of scale. For one, looking at the data at the scale of the city makes it difficult to see the distinction between the land’s edge today and the predicted coastal boundary in 2070: in short, the significance of sea level rise is not clear. Further, specific to our initial research question, mapping at the scale of the city makes it difficult to definitively distinguish when a hospital falls in flood risk areas and when it is presumed “safe”. It is possible that as we develop our abilities in R, we can write code that makes the analysis more clearly legible; for example, a difference in color hospital points that fall inside and out of the flood zone.
+
+Additionally, if starting with the research question we initially outlined, perhaps there were other data visualization tools to provide responses to this research question. Could a bar chart (as opposed to a map) have provided a clearer analysis? Or possibly, a bar chart in confluence with the map? Conversely, if starting with these data sets and working to understand what insights are possible from the data we have, we wonder if the layering of additional data sets (eg. population density and transportation routes) might drive useful insights. Ultimately, a more complex social-cultural understanding of what defines “health infrastructure” may be necessary to comprehensively assess community resilience.
