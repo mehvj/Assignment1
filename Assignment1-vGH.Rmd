@@ -1,6 +1,6 @@
 ---
-title: "Assignment1"
-author: "Mehvish Jamal"
+title: "2070 Sea Level Rise Threat to Boston Hospitals"
+author: "Mehvish Jamal, M.C. Abbott, Grace Levin, Lamei Zhang"
 date: "9/7/2021"
 output: html_document
 ---
@@ -43,7 +43,8 @@ ggplot (nbhoods) +
 # Formatting Spatial Data ---
 We experimented with color, fill, line weights and base maps across the layers to both gain proficiency with R's capabilities, and create maps that effectively communicate this data.
 
-In this map, we used plus signs to designate hospital locations to try to have more precision. However, the clashing colors make it hard to determine what's important.
+## Map 1 ---
+In this map, we used plus signs to designate hospital locations to try to have more precision. However, the clashing colors make it hard to determine what is important.
 ```{r, message=FALSE}
 ggplot(nbhoods) +
   annotation_map_tile(zoomin = 0, progress = "none", type = "cartolight") +
@@ -59,7 +60,9 @@ ggplot(nbhoods) +
   labs(caption = "Map tiles and data from OpenStreetMap")
 ```
 
-This map attempts to use contrasting colors to make it more evident where the sealevel will intrude onto the land. We also used transparency to make it clearer where the land and sea overlap.
+
+## Map 2 ---
+This map attempts to use contrasting colors to make it more evident where the sea level will intrude onto the land. We also used transparency to make it more clear where the land and sea overlap.
 ```{r}
 ggplot(nbhoods) +
   annotation_map_tile(zoomin = 0, progress = "none", type = "cartolight") +
@@ -77,6 +80,8 @@ ggplot(nbhoods) +
 
 ```
 
+
+## Map 3 ---
 In this map, we used the hotstyle base map to have a more engaging basemap. However this map uses too many colors, and the thickness of the polygons and points makes it hard to distinguish the data from the base map.
 
 ```{r}
@@ -93,6 +98,8 @@ ggplot() +
   labs(caption = "Map tiles and data from OpenStreetMap")
 ```
 
+
+## Map 4 ---
 We tried to use a darker base map here to draw greater attention to the location of the hospitals relative to the water while experimenting with contrast.
 ```{r}
 ggplot() +
@@ -106,6 +113,8 @@ ggplot() +
 
 ```
 
+
+## Map 5 ---
 This map uses a lighter color scheme and a polygon outline to draw more attention to the relationship of the water to the land. However, it is difficult to tell where the water overlaps the land. More transparency of the polygon layer could be helpful.
 ```{r}
 ggplot() +
